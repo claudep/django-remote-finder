@@ -58,7 +58,7 @@ class RemoteFinder(BaseFinder):
         for path, (url, cksm) in self.resources.items():
             if matches_patterns(path, ignore_patterns):
                 continue
-            #self.fetch(path, url, cksm)
+            self.fetch(path, url, cksm)
             yield path, self.storage
 
 # fixme: make a way to verify all hashes are correct, either on the cmdline or
