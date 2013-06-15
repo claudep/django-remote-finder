@@ -18,7 +18,8 @@ class RemoteFinder(BaseFinder):
         resources = settings.REMOTE_FINDER_RESOURCES
         if not isinstance(resources, (list, tuple)):
             raise ImproperlyConfigured("settings.REMOTE_FINDER_RESOURCES must be a list or tuple")
-        self.resources = {path: (url, cksm) for path, url, cksm in resources}
+        self.resources = dict([(path, (url, cksm))
+                               for path, url, cksm in resources])
 
     def find(self, path, all=False):
         try:
