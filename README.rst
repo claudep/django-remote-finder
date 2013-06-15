@@ -1,7 +1,9 @@
 django-remote-finder
 ====================
 
-https://pypi.python.org/pypi/django-remote-finder
+Source: https://github.com/garrison/django-remote-finder
+
+Download: https://pypi.python.org/pypi/django-remote-finder
 
 This is a simple package designed to solve the annoying problem of
 having to keep various javascript/css libraries updated within a
