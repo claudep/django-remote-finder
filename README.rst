@@ -30,8 +30,9 @@ And then e.g. in a template, you can write::
     {% load staticfiles %}
     <script src="{% static "jquery-2.0.2.min.js" %}"></script>
 
-and the script will automatically download.  No more need to keep it
-in the repository!
+No more need to keep such files in the repository!  ``./manage.py
+runserver`` (with ``DEBUG=True``) will download the files as needed, as
+will ``./manage.py collectstatic``.
 
 NOTE: the Django documentation says "Static file finders are currently
 considered a private interface, and this interface is thus
