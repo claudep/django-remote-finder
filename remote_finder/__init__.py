@@ -41,7 +41,13 @@ class RemoteFinder(BaseFinder):
                 hash_func = hash_func_map[hash_type]
             except KeyError:
                 raise ImproperlyConfigured("RemoteFinder: hash type `%s` unknown" % hash_type)
-            resources[path] = (url, hash_func, expected_hexdigest)
+            try:
+                expected_digest = bytearray.fromhex(expected_hexdigest)
+            except ValueError:
+                raise ImproperlyConfigured("Cannot parse hex string in settings.REMOTE_FINDER_RESOURCES: `%s`" % expected_hexdigest)
+            if len(expected_digest) != hash_func().digest_size:
+                raise ImproperlyConfigured("settings.REMOTE_FINDER_RESOURCES: %s digest expected %d bytes but %d provided: `%s`" % (hash_type, hash_func().digest_size, len(expected_digest), expected_hexdigest))
+            resources[path] = (url, hash_func, expected_digest)
         self.resources = resources
 
     def find(self, path, all=False):
@@ -60,7 +66,7 @@ class RemoteFinder(BaseFinder):
         if self.storage.exists(path):
             return
 
-        url, hash_func, expected_hexdigest = fetch_info
+        url, hash_func, expected_digest = fetch_info
 
         # download the file
         f = urlopen(url)
@@ -70,8 +76,8 @@ class RemoteFinder(BaseFinder):
             f.close()
 
         # check its hash
-        hexdigest = hash_func(content).hexdigest()
-        if hexdigest != expected_hexdigest:
+        digest = hash_func(content).digest()
+        if digest != expected_digest:
             raise Exception("Digest does not match!")
 
         # save it
