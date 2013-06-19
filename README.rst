@@ -16,7 +16,7 @@ Get started by adding the following to ``settings.py``::
     REMOTE_FINDER_CACHE_DIR = '/path/to/staticfile/cache'
 
     REMOTE_FINDER_RESOURCES = [
-        ('jquery-2.0.2.min.js', 'http://code.jquery.com/jquery-2.0.2.min.js', 'sha1:1e0331b6dd11e6b511d2e3d75805f5ccdb3b83df'),
+        ('jquery.min.js', 'http://code.jquery.com/jquery-2.0.2.min.js', 'sha1:1e0331b6dd11e6b511d2e3d75805f5ccdb3b83df'),
     ]
 
     STATICFILES_FINDERS = (
@@ -28,7 +28,7 @@ Get started by adding the following to ``settings.py``::
 And then e.g. in a template, you can write::
 
     {% load staticfiles %}
-    <script src="{% static "jquery-2.0.2.min.js" %}"></script>
+    <script src="{% static "jquery.min.js" %}"></script>
 
 No more need to keep such files in the repository!  ``./manage.py
 runserver`` (with ``DEBUG=True``) will download the files as needed, as
