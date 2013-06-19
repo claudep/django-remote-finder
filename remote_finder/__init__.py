@@ -100,6 +100,10 @@ class RemoteFinder(BaseFinder):
             # hash verification failed, so delete it from storage and
             # re-download the file
             logger.info("Hash verification failed, so deleting %s from storage", path)
+
+            # The following line does /not/ raise an exception if the file is
+            # already deleted, which is desirable for us as it prevents an
+            # error in the case of a race condition.
             self.storage.delete(path)
 
         # download the file
