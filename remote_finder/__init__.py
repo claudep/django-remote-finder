@@ -92,7 +92,7 @@ class RemoteFinder(BaseFinder):
         # save it
         name = self.storage.save(path, ContentFile(content))
         if name != path:
-            print("Warning: %r != %r" % (name, path))
+            logger.warning("Save failed: %r != %r", name, path)
 
     def list(self, ignore_patterns):
         for path, fetch_info in self.resources.items():
