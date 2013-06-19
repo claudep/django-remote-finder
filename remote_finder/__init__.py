@@ -33,6 +33,7 @@ class _ResourceInfo(object):
 
 class RemoteFinder(BaseFinder):
     def __init__(self):
+        self.always_verify = getattr(settings, "REMOTE_FINDER_ALWAYS_VERIFY", False)
         self.cache_dir = getattr(settings, "REMOTE_FINDER_CACHE_DIR", None)
         if not self.cache_dir:
             raise ImproperlyConfigured("settings.REMOTE_FINDER_CACHE_DIR must point to a cache directory.")
@@ -83,7 +84,7 @@ class RemoteFinder(BaseFinder):
         if self.storage.exists(path):
             # check to see if the hash has already been verified in the
             # lifetime of this process
-            if resource_info.hash_verified:
+            if resource_info.hash_verified and not self.always_verify:
                 return
 
             # verify the hash
