@@ -1,4 +1,5 @@
 import hashlib
+import logging
 try:
     from urllib.request import urlopen
 except ImportError:  # Python 2
@@ -11,6 +12,8 @@ from django.contrib.staticfiles.finders import BaseFinder
 from django.contrib.staticfiles.utils import matches_patterns
 from django.conf import settings
 
+logger = logging.getLogger(__name__)
+
 hash_func_map = {
     'md5': hashlib.md5,
     'sha1': hashlib.sha1,
@@ -22,9 +25,15 @@ hash_func_map = {
 
 class RemoteFinder(BaseFinder):
     def __init__(self):
-        self.cache_dir = settings.REMOTE_FINDER_CACHE_DIR
+        self.cache_dir = getattr(settings, "REMOTE_FINDER_CACHE_DIR", None)
+        if not self.cache_dir:
+            raise ImproperlyConfigured("settings.REMOTE_FINDER_CACHE_DIR must point to a cache directory.")
         self.storage = FileSystemStorage(self.cache_dir)
-        resources_setting = settings.REMOTE_FINDER_RESOURCES
+        try:
+            resources_setting = settings.REMOTE_FINDER_RESOURCES
+        except AttributeError:
+            logger.warning("RemoteFinder is enabled, but settings.REMOTE_FINDER_RESOURCES is not defined.")
+            resources_setting = ()
         if not isinstance(resources_setting, (list, tuple)):
             raise ImproperlyConfigured("settings.REMOTE_FINDER_RESOURCES must be a list or tuple")
         resources = {}
