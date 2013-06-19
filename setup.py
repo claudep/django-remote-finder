@@ -5,7 +5,7 @@ except ImportError:
 
 setup(
     name='django-remote-finder',
-    version='0.3dev',
+    version='0.3',
     author='Jim Garrison',
     packages=[
         'remote_finder',
