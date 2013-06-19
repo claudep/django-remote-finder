@@ -23,6 +23,14 @@ hash_func_map = {
     'sha512': hashlib.sha512,
 }
 
+class _ResourceInfo(object):
+    hash_verified = False
+
+    def __init__(self, url, hash_func, expected_digest):
+        self.url = url
+        self.hash_func = hash_func
+        self.expected_digest = expected_digest
+
 class RemoteFinder(BaseFinder):
     def __init__(self):
         self.cache_dir = getattr(settings, "REMOTE_FINDER_CACHE_DIR", None)
@@ -56,50 +64,67 @@ class RemoteFinder(BaseFinder):
                 raise ImproperlyConfigured("Cannot parse hex string in settings.REMOTE_FINDER_RESOURCES: `%s`" % expected_hexdigest)
             if len(expected_digest) != hash_func().digest_size:
                 raise ImproperlyConfigured("settings.REMOTE_FINDER_RESOURCES: %s digest expected %d bytes but %d provided: `%s`" % (hash_type, hash_func().digest_size, len(expected_digest), expected_hexdigest))
-            resources[path] = (url, hash_func, expected_digest)
+            resources[path] = _ResourceInfo(url, hash_func, expected_digest)
         self.resources = resources
 
     def find(self, path, all=False):
         try:
-            fetch_info = self.resources[path]
+            resource_info = self.resources[path]
         except KeyError:
             return []
-        self.fetch(path, fetch_info)
+        self.fetch(path, resource_info)
         match = self.storage.path(path)
         if all:
             return [match]
         else:
             return match
 
-    def fetch(self, path, fetch_info):
+    def fetch(self, path, resource_info):
         if self.storage.exists(path):
-            return
+            # check to see if the hash has already been verified in the
+            # lifetime of this process
+            if resource_info.hash_verified:
+                return
 
-        url, hash_func, expected_digest = fetch_info
+            # verify the hash
+            f = self.storage.open(path)
+            try:
+                content = f.read()
+            finally:
+                f.close()
+            digest = resource_info.hash_func(content).digest()
+            if digest == resource_info.expected_digest:
+                resource_info.hash_verified = True
+                return
+
+            # hash verification failed, so delete it from storage and
+            # re-download the file
+            logger.info("Hash verification failed, so deleting %s from storage", path)
+            self.storage.delete(path)
 
         # download the file
-        f = urlopen(url)
+        logger.info("Downloading %s", resource_info.url)
+        f = urlopen(resource_info.url)
         try:
             content = f.read()
         finally:
             f.close()
 
         # check its hash
-        digest = hash_func(content).digest()
-        if digest != expected_digest:
+        digest = resource_info.hash_func(content).digest()
+        if digest != resource_info.expected_digest:
             raise Exception("Digest does not match!")
 
         # save it
         name = self.storage.save(path, ContentFile(content))
-        if name != path:
+        if name == path:
+            resource_info.hash_verified = True
+        else:
             logger.warning("Save failed: %r != %r", name, path)
 
     def list(self, ignore_patterns):
-        for path, fetch_info in self.resources.items():
+        for path, resource_info in self.resources.items():
             if matches_patterns(path, ignore_patterns):
                 continue
-            self.fetch(path, fetch_info)
+            self.fetch(path, resource_info)
             yield path, self.storage
-
-# fixme: make a way to verify all hashes are correct, either on the cmdline or
-# all the time
