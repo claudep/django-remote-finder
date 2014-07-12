@@ -23,6 +23,7 @@ hash_func_map = {
     'sha512': hashlib.sha512,
 }
 
+
 class _ResourceInfo(object):
     hash_verified = False
 
@@ -30,6 +31,7 @@ class _ResourceInfo(object):
         self.url = url
         self.hash_func = hash_func
         self.expected_digest = expected_digest
+
 
 class RemoteFinder(BaseFinder):
     def __init__(self):
