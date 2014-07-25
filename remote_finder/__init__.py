@@ -35,8 +35,10 @@ class _ResourceInfo(object):
 
 class RemoteFinder(BaseFinder):
     def __init__(self):
-        self.always_verify = getattr(settings, "REMOTE_FINDER_ALWAYS_VERIFY", False)
-        self.cache_dir = getattr(settings, "REMOTE_FINDER_CACHE_DIR", None)
+        self.always_verify = getattr(settings,
+                                     "REMOTE_FINDER_ALWAYS_VERIFY", False)
+        self.cache_dir = getattr(settings,
+                                 "REMOTE_FINDER_CACHE_DIR", None)
         if not self.cache_dir:
             raise ImproperlyConfigured("settings.REMOTE_FINDER_CACHE_DIR must point to a cache directory.")
         self.storage = FileSystemStorage(self.cache_dir)
@@ -46,7 +48,8 @@ class RemoteFinder(BaseFinder):
             logger.warning("RemoteFinder is enabled, but settings.REMOTE_FINDER_RESOURCES is not defined.")
             resources_setting = ()
         if not isinstance(resources_setting, (list, tuple)):
-            raise ImproperlyConfigured("settings.REMOTE_FINDER_RESOURCES must be a list or tuple")
+            raise ImproperlyConfigured(
+                "settings.REMOTE_FINDER_RESOURCES must be a list or tuple")
         resources = {}
         for resource in resources_setting:
             try:
@@ -60,7 +63,8 @@ class RemoteFinder(BaseFinder):
             try:
                 hash_func = hash_func_map[hash_type]
             except KeyError:
-                raise ImproperlyConfigured("RemoteFinder: hash type `%s` unknown" % hash_type)
+                raise ImproperlyConfigured(
+                    "RemoteFinder: hash type `%s` unknown" % hash_type)
             try:
                 expected_digest = bytearray.fromhex(expected_hexdigest)
             except ValueError:
@@ -102,7 +106,9 @@ class RemoteFinder(BaseFinder):
 
             # hash verification failed, so delete it from storage and
             # re-download the file
-            logger.info("Hash verification failed, so deleting %s from storage", path)
+            logger.info(
+                "Hash verification failed, so deleting %s from storage",
+                path)
 
             # The following line does /not/ raise an exception if the file is
             # already deleted, which is desirable for us as it prevents an
