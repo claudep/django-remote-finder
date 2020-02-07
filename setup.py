@@ -10,7 +10,7 @@ setup(
     description='Keep various javascript/css libraries updated within a Django package',
     url='https://github.com/claudep/django-remote-finder',
     packages=[
-        'remote_finder',
+        'remote_finder', 'tests',
     ],
     install_requires=['Django'],
     license='MIT',
