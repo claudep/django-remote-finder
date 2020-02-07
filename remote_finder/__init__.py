@@ -120,7 +120,10 @@ class RemoteFinder(BaseFinder):
         # check its hash
         digest = resource_info.hash_func(content).digest()
         if digest != resource_info.expected_digest:
-            raise RuntimeError("Digest for %s does not match expected value given in settings.REMOTE_FINDER_RESOURCES", resource_info.url)
+            raise RuntimeError(
+                "Digest for %s does not match expected value given in settings"
+                ".REMOTE_FINDER_RESOURCES" % resource_info.url
+            )
 
         # save it
         name = self.storage.save(path, ContentFile(content))
