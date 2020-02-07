@@ -27,7 +27,7 @@ Get started by adding the following to ``settings.py``::
 
 And then e.g. in a template, you can write::
 
-    {% load staticfiles %}
+    {% load static %}
     <script src="{% static "jquery.min.js" %}"></script>
 
 No more need to keep such files in the repository!  ``./manage.py

@@ -1,9 +1,6 @@
 import hashlib
 import logging
-try:
-    from urllib.request import urlopen
-except ImportError:  # Python 2
-    from urllib2 import urlopen
+from urllib.request import urlopen
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files.base import ContentFile
@@ -24,7 +21,7 @@ hash_func_map = {
 }
 
 
-class _ResourceInfo(object):
+class _ResourceInfo:
     hash_verified = False
 
     def __init__(self, url, hash_func, expected_digest):

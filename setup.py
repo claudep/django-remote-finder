@@ -5,10 +5,10 @@ except ImportError:
 
 setup(
     name='django-remote-finder',
-    version='0.3dev',
+    version='0.4',
     author='Jim Garrison',
     description='Keep various javascript/css libraries updated within a Django package',
-    url='https://github.com/garrison/django-remote-finder',
+    url='https://github.com/claudep/django-remote-finder',
     packages=[
         'remote_finder',
     ],
