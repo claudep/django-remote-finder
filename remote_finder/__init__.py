@@ -1,5 +1,6 @@
 import hashlib
 import logging
+from pathlib import Path
 from urllib.request import urlopen
 
 from django.core.exceptions import ImproperlyConfigured
@@ -31,11 +32,18 @@ class _ResourceInfo:
 
 
 class RemoteFinder(BaseFinder):
+    default_cache_dir = 'remote_finder_cache'
+
     def __init__(self):
         self.always_verify = getattr(settings, "REMOTE_FINDER_ALWAYS_VERIFY", False)
         self.cache_dir = getattr(settings, "REMOTE_FINDER_CACHE_DIR", None)
         if not self.cache_dir:
-            raise ImproperlyConfigured("settings.REMOTE_FINDER_CACHE_DIR must point to a cache directory.")
+            if settings.STATIC_ROOT is None:
+                raise ImproperlyConfigured(
+                    "Either settings.STATIC_ROOT or settings.REMOTE_FINDER_CACHE_DIR must be defined."
+                )
+            else:
+                self.cache_dir = Path(settings.STATIC_ROOT) / self.default_cache_dir
         self.storage = FileSystemStorage(self.cache_dir)
         try:
             resources_setting = settings.REMOTE_FINDER_RESOURCES

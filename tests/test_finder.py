@@ -14,12 +14,12 @@ class FinderTests(SimpleTestCase):
         finders.get_finder.cache_clear()
         shutil.rmtree(settings.REMOTE_FINDER_CACHE_DIR, ignore_errors=True)
 
-    def test_missing_cache_dir(self):
+    def test_default_cache_dir(self):
         msg = "settings.REMOTE_FINDER_CACHE_DIR must point to a cache directory."
         with self.settings():
             del settings.REMOTE_FINDER_CACHE_DIR
-            with self.assertRaisesMessage(ImproperlyConfigured, msg):
-                finder = finders.get_finder('remote_finder.RemoteFinder')
+            finder = finders.get_finder('remote_finder.RemoteFinder')
+            self.assertTrue(finder.storage.location.endswith('/static/remote_finder_cache'))
 
     def test_missing_resources(self):
         msg = "settings.REMOTE_FINDER_RESOURCES must point to a cache directory."

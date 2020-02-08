@@ -13,6 +13,7 @@ SETTINGS_DICT = {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
     }],
+    'STATIC_ROOT': os.path.join(APP_DIR, 'static'),
     'STATICFILES_FINDERS': [
         'django.contrib.staticfiles.finders.FileSystemFinder',
         'django.contrib.staticfiles.finders.AppDirectoriesFinder',

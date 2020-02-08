@@ -13,6 +13,7 @@ Javascript dependencies outside the repository.  Until now.
 
 Get started by adding the following to ``settings.py``::
 
+    # if omitted, default to {settings.STATIC_ROOT}/remote_finder_cache
     REMOTE_FINDER_CACHE_DIR = '/path/to/staticfile/cache'
 
     REMOTE_FINDER_RESOURCES = [
