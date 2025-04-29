@@ -1,7 +1,7 @@
 django-remote-finder
 ====================
 
-Source: https://github.com/garrison/django-remote-finder
+Source: https://github.com/claudep/django-remote-finder
 
 Download: https://pypi.python.org/pypi/django-remote-finder
 

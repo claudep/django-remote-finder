@@ -75,14 +75,14 @@ class RemoteFinder(BaseFinder):
             resources[path] = _ResourceInfo(url, hash_func, expected_digest)
         self.resources = resources
 
-    def find(self, path, all=False):
+    def find(self, path, find_all=False, **kwargs):
         try:
             resource_info = self.resources[path]
         except KeyError:
             return []
         self.fetch(path, resource_info)
         match = self.storage.path(path)
-        if all:
+        if find_all:
             return [match]
         else:
             return match
